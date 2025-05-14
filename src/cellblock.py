@@ -7,8 +7,11 @@ class CellBlock:
         self.__cells = cells
         self.__total = total
 
+    def cells(self) -> list[Cell]:
+        return self.__cells
+
     def __values(self) -> set[int]:
-        return set(cell.value for cell in self.__cells if cell.value is not None)
+        return {cell.value for cell in self.__cells if cell.value is not None}
 
     def __remaining_cells(self) -> list[Cell]:
         return [cell for cell in self.__cells if cell.value is None]
@@ -41,9 +44,9 @@ class CellBlock:
         for size in range(2, max_subset_size + 1):
             for cells in itertools.combinations(self.__cells, size):
                 # Combine the values from these cells
-                possible_values = set(
+                possible_values = {
                     value for cell in cells for value in cell.possible_values
-                )
+                }
 
                 if len(possible_values) == size:
                     other_cells = set(self.__cells) - set(cells)
@@ -51,7 +54,7 @@ class CellBlock:
                     # This is a naked subset
                     for other_cell in other_cells:
                         before = other_cell.possible_values.copy()
-                        other_cell.possible_values.discard(*possible_values)
+                        other_cell.possible_values -= possible_values
 
                         if other_cell.possible_values != before:
                             changed = True
